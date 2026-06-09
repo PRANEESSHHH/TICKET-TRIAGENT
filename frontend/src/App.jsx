@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -25,6 +26,7 @@ const ProtectedRoute = ({ children }) => {
 const AppContent = () => {
   const location = useLocation();
   const isNoLayoutPage = location.pathname === '/' || location.pathname === '/login';
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (isNoLayoutPage) {
     return (
@@ -38,13 +40,13 @@ const AppContent = () => {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-slate-50 text-slate-800 flex">
+      <div className="min-h-screen bg-slate-50 text-slate-800 flex overflow-x-hidden">
         {/* Navigation Sidebar */}
-        <Sidebar />
+        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
         {/* Core Layout Window */}
-        <div className="flex-1 pl-64 flex flex-col min-h-screen">
-          <Navbar />
+        <div className="flex-1 lg:pl-64 flex flex-col min-h-screen min-w-0 transition-all duration-300">
+          <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
           
           {/* Dashboard Content Panel */}
           <main className="flex-1 p-8 overflow-y-auto">

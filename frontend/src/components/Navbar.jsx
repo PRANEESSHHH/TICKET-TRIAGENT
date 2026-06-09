@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FiBell, FiLogOut } from 'react-icons/fi';
+import { FiBell, FiLogOut, FiMenu } from 'react-icons/fi';
 
-const Navbar = () => {
+const Navbar = ({ onMenuClick }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -32,17 +32,27 @@ const Navbar = () => {
   };
 
   return (
-    <header className="h-20 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-8 sticky top-0 z-10 animate-fade-in-down">
+    <header className="h-20 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6 md:px-8 sticky top-0 z-10 animate-fade-in-down">
 
-      {/* Title */}
-      <div>
-        <h2 className="text-lg font-bold text-slate-100">
-          {getPageTitle()}
-        </h2>
-        <p className="text-[11px] text-slate-300">
-          Support ticket triage analytics engine
-        </p>
+      {/* Title & Menu Trigger */}
+      <div className="flex items-center space-x-3.5">
+        <button
+          onClick={onMenuClick}
+          className="p-2 -ml-2 rounded-xl text-slate-300 hover:bg-slate-700/50 hover:text-slate-100 lg:hidden transition-colors"
+          title="Toggle Navigation Menu"
+        >
+          <FiMenu className="w-5 h-5" />
+        </button>
+        <div>
+          <h2 className="text-sm md:text-lg font-bold text-slate-100 leading-tight">
+            {getPageTitle()}
+          </h2>
+          <p className="text-[9px] md:text-[11px] text-slate-300 mt-0.5">
+            Support ticket triage analytics engine
+          </p>
+        </div>
       </div>
+
 
       {/* Actions */}
       <div className="flex items-center space-x-4">

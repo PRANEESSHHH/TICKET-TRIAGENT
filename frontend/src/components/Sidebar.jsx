@@ -1,7 +1,7 @@
 import { NavLink, Link } from 'react-router-dom';
 import { FiGrid, FiUpload, FiList, FiBarChart2, FiDownload, FiSettings, FiCpu } from 'react-icons/fi';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
   const userType = localStorage.getItem('userType') || 'demo';
   const isDemo = userType === 'demo';
 
@@ -16,7 +16,18 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-200 flex flex-col h-screen fixed left-0 top-0 border-r border-slate-800 z-20 animate-fade-in">
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-20 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        ></div>
+      )}
+      <aside className={`w-64 bg-slate-900 text-slate-200 flex flex-col h-screen fixed left-0 top-0 border-r border-slate-800 z-30 transition-transform duration-300 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
+
 
       {/* Brand Logo Link to Landing page */}
       <Link to="/" className="p-6 border-b border-slate-800/60 flex items-center space-x-3 bg-transparent hover:bg-slate-800/60 transition-colors">
@@ -35,6 +46,7 @@ const Sidebar = () => {
           <NavLink
             key={item.name}
             to={item.path}
+            onClick={() => setIsOpen(false)}
             className={({ isActive }) =>
               `flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-150 group text-xs font-semibold ${isActive
                 ? 'bg-slate-800 text-slate-100 border border-slate-700/60 shadow-sm'
@@ -64,8 +76,10 @@ const Sidebar = () => {
             : 'Accessing local clean session'}
         </p>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 };
+
 
 export default Sidebar;
