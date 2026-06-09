@@ -1,9 +1,15 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiCpu, FiBarChart2, FiDatabase, FiLayers, FiShield, FiFileText, FiArrowUpRight } from 'react-icons/fi';
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
+  }, []);
 
   const features = [
     { title: 'Smart Classification', desc: 'Categorizes tickets automatically into Bug, Billing, Feature, or Other templates.', icon: <FiLayers className="w-5 h-5 text-blue-600" />, bg: 'bg-blue-50' },
@@ -51,17 +57,19 @@ const Landing = () => {
           </div>
         </div>
         <div className="flex items-center space-x-2 sm:space-x-4">
+          {!isAuthenticated && (
+            <button 
+              onClick={() => navigate('/login')} 
+              className="px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold text-slate-200 hover:text-slate-100 transition-all btn-strong-border rounded-lg"
+            >
+              Sign In
+            </button>
+          )}
           <button 
-            onClick={() => navigate('/login')} 
-            className="px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold text-slate-200 hover:text-slate-100 transition-all btn-strong-border rounded-lg"
-          >
-            Sign In
-          </button>
-          <button 
-            onClick={() => handleStart('demo')} 
+            onClick={() => handleStart(isAuthenticated ? (localStorage.getItem('userType') || 'demo') : 'demo')} 
             className="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm flex items-center space-x-1 sm:space-x-1.5 btn-strong-border"
           >
-            <span>Launch App</span>
+            <span>{isAuthenticated ? 'Go to Dashboard' : 'Launch App'}</span>
             <FiArrowUpRight className="shrink-0" />
           </button>
         </div>
