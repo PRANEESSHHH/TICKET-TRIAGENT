@@ -40,35 +40,35 @@ const Landing = () => {
       <div className="h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600"></div>
 
       {/* Header Bar */}
-      <header className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center border-b border-slate-700 bg-slate-800/70 backdrop-blur-md sticky top-0 z-50 animate-fade-in">
-        <div className="flex items-center space-x-3">
-          <div className="bg-blue-600 p-2.5 rounded-xl flex items-center justify-center text-white shadow-md shadow-blue-500/10">
-            <FiCpu className="w-5 h-5" />
+      <header className="max-w-7xl mx-auto px-4 sm:px-8 py-4 md:py-5 flex justify-between items-center border-b border-slate-700 bg-slate-800/70 backdrop-blur-md sticky top-0 z-50 animate-fade-in">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="bg-blue-600 p-2 sm:p-2.5 rounded-xl flex items-center justify-center text-white shadow-md shadow-blue-500/10 shrink-0">
+            <FiCpu className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div>
-            <span className="font-extrabold text-lg tracking-tight text-slate-100 block leading-none">TriageAgent</span>
-            <span className="text-[10px] font-semibold text-blue-300 tracking-wider">SUPPORT AI PLATFORM</span>
+          <div className="text-left">
+            <span className="font-extrabold text-sm sm:text-base md:text-lg tracking-tight text-slate-100 block leading-none">TriageAgent</span>
+            <span className="text-[8px] sm:text-[9px] md:text-[10px] font-semibold text-blue-300 tracking-wider block mt-0.5 sm:mt-1">SUPPORT AI PLATFORM</span>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           <button 
             onClick={() => navigate('/login')} 
-            className="px-4 py-2 text-xs font-bold text-slate-200 hover:text-slate-100 transition-all btn-strong-border rounded-lg"
+            className="px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold text-slate-200 hover:text-slate-100 transition-all btn-strong-border rounded-lg"
           >
             Sign In
           </button>
           <button 
             onClick={() => handleStart('demo')} 
-            className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5 btn-strong-border"
+            className="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm flex items-center space-x-1 sm:space-x-1.5 btn-strong-border"
           >
             <span>Launch App</span>
-            <FiArrowUpRight />
+            <FiArrowUpRight className="shrink-0" />
           </button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-8 pt-16 pb-20 text-center relative">
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-16 pb-20 text-center relative">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -103,7 +103,7 @@ const Landing = () => {
       {/* Preview removed per request */}
 
       {/* Platform Workflow Section */}
-      <section className="max-w-7xl mx-auto px-8 py-20 border-t border-slate-700">
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-20 border-t border-slate-700">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-extrabold text-slate-100 tracking-tight">System Workflow Pipelines</h2>
           <p className="text-slate-300 mt-2 text-sm max-w-lg mx-auto">
@@ -125,7 +125,7 @@ const Landing = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="max-w-7xl mx-auto px-8 py-20 border-t border-slate-700">
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-20 border-t border-slate-700">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-extrabold text-slate-100 tracking-tight">Core Platform Capabilities</h2>
           <p className="text-slate-300 mt-2 text-sm max-w-lg mx-auto">
@@ -150,7 +150,7 @@ const Landing = () => {
       </section>
 
       {/* Team Section */}
-      <section className="max-w-7xl mx-auto px-8 py-20 border-t border-slate-700">
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-20 border-t border-slate-700">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-extrabold text-slate-100 tracking-tight">Project Development Team</h2>
           <p className="text-slate-300 mt-2 text-sm max-w-lg mx-auto">
@@ -175,7 +175,7 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="border-t border-slate-700 bg-transparent py-10 text-slate-300 text-xs text-center">
-        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <span className="font-bold text-slate-100">TriageAgent Platform</span>
           <div className="flex space-x-6">
             <a href="#github" className="hover:text-slate-100/80">GitHub</a>

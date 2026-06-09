@@ -206,7 +206,7 @@ const Results = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[750px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-400 text-[10px] font-bold uppercase">
                   <th className="py-4 pl-6 w-28">ID</th>
@@ -247,14 +247,14 @@ const Results = () => {
                     <td className="py-4 pr-6 text-right space-x-2">
                       <button
                         onClick={() => navigate(`/ticket/${t.id}`)}
-                        className="p-2 hover:bg-slate-100 text-blue-600 rounded-lg transition-colors inline-block"
+                        className="p-2 hover:bg-slate-100 text-blue-600 rounded-lg transition-colors inline-block border-none"
                         title="View Detailed Classification"
                       >
                         <FiEye className="w-4.5 h-4.5" />
                       </button>
                       <button
                         onClick={() => handleEditClick(t)}
-                        className="p-2 hover:bg-slate-100 text-amber-600 rounded-lg transition-colors inline-block"
+                        className="p-2 hover:bg-slate-100 text-amber-600 rounded-lg transition-colors inline-block border-none"
                         title="Edit Categories"
                       >
                         <FiEdit2 className="w-4.5 h-4.5" />

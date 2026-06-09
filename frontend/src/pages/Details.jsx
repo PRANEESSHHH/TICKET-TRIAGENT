@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronLeft, FiCpu, FiTrendingUp, FiClock, FiFileText, FiEdit, FiDownload } from 'react-icons/fi';
@@ -107,26 +107,26 @@ const Details = () => {
   return (
     <div className="space-y-6 pb-10 text-left">
       {/* Back Header */}
-      <div className="flex justify-between items-center">
-        <button
-          onClick={() => navigate('/results')}
-          className="flex items-center space-x-2 text-xs text-slate-500 hover:text-slate-800 transition-colors font-bold"
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <Link
+          to="/results"
+          className="flex items-center space-x-2 text-xs text-slate-500 hover:text-slate-800 transition-colors font-bold border-none"
         >
           <FiChevronLeft className="w-4.5 h-4.5" />
           <span>Back to support queue</span>
-        </button>
+        </Link>
 
-        <div className="space-x-3">
+        <div className="flex space-x-2 sm:space-x-3 w-full sm:w-auto">
           <button
             onClick={() => setIsEditing(true)}
-            className="border border-slate-205 bg-white hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 inline-block shadow-sm"
+            className="flex-1 sm:flex-initial border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 shadow-sm"
           >
             <FiEdit className="w-3.5 h-3.5" />
             <span>Override Triage</span>
           </button>
           <button
             onClick={handleExportJSON}
-            className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5 inline-block"
+            className="flex-1 sm:flex-initial bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center space-x-1.5"
           >
             <FiDownload className="w-3.5 h-3.5" />
             <span>Download JSON</span>

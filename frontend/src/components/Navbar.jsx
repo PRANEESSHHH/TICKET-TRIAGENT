@@ -32,22 +32,22 @@ const Navbar = ({ onMenuClick }) => {
   };
 
   return (
-    <header className="h-20 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6 md:px-8 sticky top-0 z-10 animate-fade-in-down">
+    <header className="h-20 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4 sm:px-6 md:px-8 sticky top-0 z-10 animate-fade-in-down">
 
       {/* Title & Menu Trigger */}
-      <div className="flex items-center space-x-3.5">
+      <div className="flex items-center space-x-2.5 sm:space-x-3.5">
         <button
           onClick={onMenuClick}
-          className="p-2 -ml-2 rounded-xl text-slate-300 hover:bg-slate-700/50 hover:text-slate-100 lg:hidden transition-colors"
+          className="p-2 -ml-2 rounded-xl text-slate-300 hover:bg-slate-700/50 hover:text-slate-100 lg:hidden transition-colors border-none"
           title="Toggle Navigation Menu"
         >
           <FiMenu className="w-5 h-5" />
         </button>
-        <div>
+        <div className="text-left">
           <h2 className="text-sm md:text-lg font-bold text-slate-100 leading-tight">
             {getPageTitle()}
           </h2>
-          <p className="text-[9px] md:text-[11px] text-slate-300 mt-0.5">
+          <p className="text-[9px] md:text-[11px] text-slate-300 mt-0.5 truncate max-w-[150px] sm:max-w-none">
             Support ticket triage analytics engine
           </p>
         </div>
@@ -55,10 +55,10 @@ const Navbar = ({ onMenuClick }) => {
 
 
       {/* Actions */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-2 sm:space-x-4">
 
         {/* Workspace indicator tag */}
-        <span className={`text-[10px] font-bold px-3 py-1 rounded-full border ${isDemo
+        <span className={`hidden md:inline-block text-[10px] font-bold px-3 py-1 rounded-full border ${isDemo
             ? 'bg-blue-700/30 border-blue-600 text-blue-200'
             : 'bg-emerald-700/25 border-emerald-600 text-emerald-200'
           }`}>
@@ -69,7 +69,7 @@ const Navbar = ({ onMenuClick }) => {
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2.5 rounded-xl hover:bg-slate-700/50 text-slate-200 relative transition-colors"
+            className="p-2.5 rounded-xl hover:bg-slate-700/50 text-slate-200 relative transition-colors border-none"
           >
             <FiBell className="w-5 h-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white animate-ping"></span>
@@ -104,7 +104,7 @@ const Navbar = ({ onMenuClick }) => {
         <div className="relative">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-700/40 transition-colors"
+            className="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-700/40 transition-colors border-none"
           >
             <div className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center text-white font-bold text-xs shadow-sm ${isDemo ? 'bg-blue-600' : 'bg-emerald-600'
               }`}>

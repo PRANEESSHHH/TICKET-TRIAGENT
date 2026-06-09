@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { 
@@ -205,17 +205,17 @@ const Dashboard = () => {
               <h3 className="font-extrabold text-base text-slate-900">Recent Ticket Activity</h3>
               <p className="text-[11px] text-slate-400">Latest support tickets analyzed by our AI agents</p>
             </div>
-            <button
-              onClick={() => navigate('/results')}
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center space-x-1.5 transition-all"
+            <Link
+              to="/results"
+              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center space-x-1.5 transition-all border-none"
             >
               <span>View Support Queue</span>
               <FiArrowRight />
-            </button>
+            </Link>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[500px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 text-slate-400 text-[10px] font-bold uppercase">
                   <th className="pb-3 pl-2">Ticket ID</th>

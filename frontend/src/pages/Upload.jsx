@@ -300,7 +300,7 @@ const Upload = () => {
           </div>
 
           <div className="overflow-x-auto max-h-[400px]">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[550px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 text-slate-400 text-[10px] font-bold uppercase sticky top-0 bg-white">
                   <th className="pb-3 pl-2">Ticket ID</th>
