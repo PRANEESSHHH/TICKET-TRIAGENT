@@ -22,9 +22,9 @@ const Landing = () => {
   ];
 
   const team = [
-    { name: 'Praveen Kumar', role: 'Full Stack & AI Architect', initial: 'PK' },
-    { name: 'Aditya Raj', role: 'Lead UI/UX Developer', initial: 'AR' },
-    { name: 'Sneha Sharma', role: 'Systems QA Engineer', initial: 'SS' }
+    { name: 'Praveen', role: 'Full Stack & AI Architect', initial: 'P' },
+    { name: 'Pranesh Kumar', role: 'Lead UI/UX Developer', initial: 'PK' },
+    { name: 'Prasanna', role: 'Systems QA Engineer', initial: 'P' }
   ];
 
   const handleStart = (userType) => {
