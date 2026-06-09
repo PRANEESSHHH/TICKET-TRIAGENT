@@ -1,7 +1,6 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiCpu, FiBarChart2, FiArrowRight, FiDatabase, FiLayers, FiShield, FiFileText, FiActivity, FiArrowUpRight } from 'react-icons/fi';
+import { FiCpu, FiBarChart2, FiDatabase, FiLayers, FiShield, FiFileText, FiArrowUpRight } from 'react-icons/fi';
 
 const Landing = () => {
   const navigate = useNavigate();

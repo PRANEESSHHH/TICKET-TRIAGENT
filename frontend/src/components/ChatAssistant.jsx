@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FiMessageSquare, FiX, FiSend, FiCpu } from 'react-icons/fi';
 import axios from 'axios';
 

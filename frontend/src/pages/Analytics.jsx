@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line
 } from 'recharts';
-import { FiTrendingUp, FiCpu, FiClock, FiDatabase, FiAlertTriangle } from 'react-icons/fi';
+import { FiTrendingUp, FiClock, FiDatabase, FiAlertTriangle } from 'react-icons/fi';
 
 const COLORS = {
   Bug: '#EF4444',

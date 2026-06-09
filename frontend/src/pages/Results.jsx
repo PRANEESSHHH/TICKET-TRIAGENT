@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +9,7 @@ const Results = () => {
   const [tickets, setTickets] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   
   const [search, setSearch] = useState('');
@@ -25,7 +25,7 @@ const Results = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get('/api/results', {
@@ -55,7 +55,7 @@ const Results = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, search, categoryFilter, priorityFilter, sortBy, sortDesc]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -63,7 +63,7 @@ const Results = () => {
     }, 250);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [page, limit, search, categoryFilter, priorityFilter, sortBy, sortDesc]);
+  }, [fetchTickets]);
 
   const handleEditClick = (ticket) => {
     setEditingTicket(ticket);
@@ -107,8 +107,9 @@ const Results = () => {
   };
 
   const handleExportCSV = () => {
-    const userType = localStorage.getItem('userType') || 'demo';
-    window.open(`http://localhost:8000/api/export/csv`, '_blank');
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
+    window.open(`${cleanApiBase}/api/export/csv`, '_blank');
   };
 
   return (

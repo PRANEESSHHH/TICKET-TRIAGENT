@@ -6,7 +6,7 @@ import App from './App.jsx'
 import './index.css'
 
 // Global Axios configuration
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 axios.interceptors.request.use(
   (config) => {
     const userType = localStorage.getItem('userType') || 'demo';

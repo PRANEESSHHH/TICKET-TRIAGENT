@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiMail, FiLock, FiCpu, FiEye, FiEyeOff, FiUserPlus, FiUser } from 'react-icons/fi';
+import { FiMail, FiLock, FiCpu, FiEye, FiEyeOff, FiUser } from 'react-icons/fi';
 import axios from 'axios';
 
 const Login = () => {

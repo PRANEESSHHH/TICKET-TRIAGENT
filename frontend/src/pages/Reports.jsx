@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FiDownload, FiFileText, FiDatabase, FiTable } from 'react-icons/fi';
 
 const Reports = () => {
@@ -18,15 +18,21 @@ const Reports = () => {
   };
 
   const handleExportCSV = () => {
-    window.open(`http://localhost:8000/api/export/csv${buildQueryString()}`, '_blank');
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
+    window.open(`${cleanApiBase}/api/export/csv${buildQueryString()}`, '_blank');
   };
 
   const handleExportJSON = () => {
-    window.open(`http://localhost:8000/api/export/json${buildQueryString()}`, '_blank');
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
+    window.open(`${cleanApiBase}/api/export/json${buildQueryString()}`, '_blank');
   };
 
   const handleDownloadDatabase = () => {
-    window.open('http://localhost:8000/api/export/database', '_blank');
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
+    window.open(`${cleanApiBase}/api/export/database`, '_blank');
   };
 
   return (

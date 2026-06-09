@@ -1,5 +1,0 @@
-{
-  "gemini_api_key": "YOUR_GEMINI_API_KEY",
-  "model_name": "gemini-1.5-pro",
-  "system_prompt": "You are a helpful test agent prompt."
-}

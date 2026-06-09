@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,7 +11,6 @@ const Upload = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const [manualJson, setManualJson] = useState('');
   const [showManualEntry, setShowManualEntry] = useState(false);
   const fileInputRef = useRef(null);
@@ -48,7 +47,6 @@ const Upload = () => {
       return;
     }
     setError('');
-    setSuccess(false);
     setLoading(true);
 
     try {
@@ -69,7 +67,6 @@ const Upload = () => {
       return;
     }
     setError('');
-    setSuccess(false);
     setLoading(true);
     setFile(selectedFile);
 
@@ -81,7 +78,6 @@ const Upload = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setTickets(response.data.tickets);
-      setSuccess(true);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.detail || 'Failed to parse JSON file. Ensure it is a valid list of tickets.');
@@ -94,7 +90,6 @@ const Upload = () => {
   const clearFile = () => {
     setFile(null);
     setTickets([]);
-    setSuccess(false);
     setError('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -120,7 +115,6 @@ const Upload = () => {
         }));
         setTickets(formatted.slice(0, 10)); // preview first 10
         setFile({ name: 'sample_dataset_10.json', size: 4096 });
-        setSuccess(true);
       } else {
         const localMocks = [
           { ticket_id: "TC-8921", title: "Double charged on monthly premium", description: "I was billed twice on my invoice #9021 for the monthly team plan. Please refund one payment." },
@@ -131,7 +125,6 @@ const Upload = () => {
         ];
         setTickets(localMocks);
         setFile({ name: 'mock_demo_tickets.json', size: 1024 });
-        setSuccess(true);
       }
     } catch (err) {
       console.error(err);

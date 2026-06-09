@@ -1,6 +1,5 @@
-import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { FiGrid, FiUpload, FiList, FiBarChart2, FiDownload, FiSettings, FiCpu, FiHome } from 'react-icons/fi';
+import { FiGrid, FiUpload, FiList, FiBarChart2, FiDownload, FiSettings, FiCpu } from 'react-icons/fi';
 
 const Sidebar = () => {
   const userType = localStorage.getItem('userType') || 'demo';

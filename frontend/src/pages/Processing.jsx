@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { FiCpu, FiPlay, FiTerminal, FiCheckCircle } from 'react-icons/fi';
 
 const Processing = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const ticketsToProcess = location.state?.tickets || [];
+  const ticketsToProcess = useMemo(
+    () => location.state?.tickets || [],
+    [location.state?.tickets]
+  );
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [logs, setLogs] = useState([]);
@@ -42,8 +44,17 @@ const Processing = () => {
     // Extract current login user type
     const userType = localStorage.getItem('userType') || 'demo';
 
+    // Resolve WebSocket URL based on configured API base URL
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    let wsBase = apiBase.replace(/^http/, 'ws');
+    if (apiBase.startsWith('/')) {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsBase = `${wsProtocol}//${window.location.host}${apiBase}`;
+    }
+    const cleanWsBase = wsBase.endsWith('/') ? wsBase.slice(0, -1) : wsBase;
+    
     // Connect to FastAPI websocket passing user_type parameter
-    const socket = new WebSocket(`ws://localhost:8000/api/ws/process?user_type=${userType}`);
+    const socket = new WebSocket(`${cleanWsBase}/api/ws/process?user_type=${userType}`);
     socketRef.current = socket;
 
     socket.onopen = () => {
@@ -81,8 +92,8 @@ const Processing = () => {
       }
     };
 
-    socket.onerror = (error) => {
-      setLogs(prev => [...prev, "❌ WebSocket Connection Error. Ensure backend server is running on port 8000."]);
+    socket.onerror = () => {
+      setLogs(prev => [...prev, "❌ WebSocket Connection Error. Ensure backend server is running and accessible."]);
       setRunning(false);
     };
 

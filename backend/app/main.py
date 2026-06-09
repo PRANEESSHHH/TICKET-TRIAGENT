@@ -38,13 +38,17 @@ DEFAULT_SETTINGS = {
 }
 
 def load_settings():
+    settings = DEFAULT_SETTINGS.copy()
     if os.path.exists(SETTINGS_FILE):
         try:
             with open(SETTINGS_FILE, "r") as f:
-                return {**DEFAULT_SETTINGS, **json.load(f)}
+                settings.update(json.load(f))
         except Exception:
-            return DEFAULT_SETTINGS
-    return DEFAULT_SETTINGS
+            pass
+    # If the settings.json does not have gemini_api_key, fallback to environment variable
+    if not settings.get("gemini_api_key"):
+        settings["gemini_api_key"] = os.getenv("GEMINI_API_KEY", "")
+    return settings
 
 def save_settings(settings: dict):
     with open(SETTINGS_FILE, "w") as f:
@@ -55,10 +59,21 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Ticket Triage Agent API", version="1.0")
 
+@app.on_event("startup")
+def startup_event():
+    from app.seed import seed_database
+    try:
+        seed_database()
+    except Exception as e:
+        print(f"Failed to seed database on startup: {e}")
+
 # Enable CORS for React frontend
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
+origins = [origin.strip() for origin in allowed_origins_env.split(",")] if allowed_origins_env else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In development, allow all. Customize for production.
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -453,7 +468,18 @@ def export_json(
 # Endpoint to download SQLite db file directly
 @app.get("/api/export/database")
 def download_database():
-    db_path = "tickets.db"
+    from app.database import DATABASE_URL
+    if not DATABASE_URL.startswith("sqlite"):
+        raise HTTPException(status_code=400, detail="Database export is only supported when using SQLite database.")
+    
+    path = DATABASE_URL
+    if path.startswith("sqlite:///"):
+        db_path = path[10:]
+    elif path.startswith("sqlite://"):
+        db_path = path[9:]
+    else:
+        db_path = "tickets.db"
+
     if not os.path.exists(db_path):
         raise HTTPException(status_code=404, detail="Database snapshot not available yet.")
         
@@ -462,7 +488,7 @@ def download_database():
             yield from file_like
             
     headers = {
-        'Content-Disposition': 'attachment; filename="tickets.db"',
+        'Content-Disposition': f'attachment; filename="{os.path.basename(db_path)}"',
         'Content-Type': 'application/x-sqlite3'
     }
     return StreamingResponse(iterfile(), headers=headers)

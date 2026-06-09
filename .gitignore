@@ -16,3 +16,7 @@ frontend/*.local
 .DS_Store
 .idea/
 .vscode/
+.history/
+settings.json
+backend/settings.json
+
