@@ -41,8 +41,9 @@ const Processing = () => {
     setRunning(true);
     setLogs(["Connecting to AI Agent websocket server..."]);
 
-    // Extract current login user type
+    // Extract current login user type and token
     const userType = localStorage.getItem('userType') || 'demo';
+    const token = localStorage.getItem('token') || '';
 
     // Resolve WebSocket URL based on configured API base URL
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -53,8 +54,9 @@ const Processing = () => {
     }
     const cleanWsBase = wsBase.endsWith('/') ? wsBase.slice(0, -1) : wsBase;
     
-    // Connect to FastAPI websocket passing user_type parameter
-    const socket = new WebSocket(`${cleanWsBase}/api/ws/process?user_type=${userType}`);
+    // Connect to FastAPI websocket passing user_type and token parameters
+    const tokenParam = token ? `&token=${token}` : '';
+    const socket = new WebSocket(`${cleanWsBase}/api/ws/process?user_type=${userType}${tokenParam}`);
     socketRef.current = socket;
 
     socket.onopen = () => {

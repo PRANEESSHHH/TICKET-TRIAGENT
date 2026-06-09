@@ -10,6 +10,9 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc, and_
 
+import jwt
+import bcrypt
+
 import hashlib
 from app.database import get_db, engine, Base
 from app.models import Ticket, User
@@ -18,6 +21,10 @@ from app.schemas import (
     CategoryStat, PriorityStat, ChatRequest, ChatResponse, UserAuth
 )
 from app.agent import classify_ticket, local_mock_classification
+
+JWT_SECRET = os.getenv("JWT_SECRET", "super-secret-key-change-in-production")
+JWT_ALGORITHM = "HS256"
+
 
 # Load settings or initialize default
 import base64
@@ -60,6 +67,28 @@ def load_settings():
 def save_settings(settings: dict):
     with open(SETTINGS_FILE, "w") as f:
         json.dump(settings, f, indent=2)
+
+def get_current_user_scope(
+    authorization: Optional[str] = Header(None), 
+    x_user_type: Optional[str] = Header(None)
+) -> str:
+    # If there is a JWT token, verify it and return the user's email
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ")[1]
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            email = payload.get("sub")
+            if email:
+                return email
+        except Exception:
+            raise HTTPException(status_code=401, detail="Session expired or invalid login token.")
+            
+    # Fallback to demo mode if specified
+    if x_user_type == "demo":
+        return "demo"
+        
+    raise HTTPException(status_code=401, detail="Authentication token required.")
+
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -133,6 +162,7 @@ async def upload_tickets(file: UploadFile = File(...)):
 async def websocket_process_tickets(
     websocket: WebSocket, 
     user_type: str = Query("demo"),
+    token: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
     """
@@ -140,6 +170,24 @@ async def websocket_process_tickets(
     classifies each ticket one-by-one, saves it to SQLite, and
     sends live logs back to the frontend.
     """
+    resolved_user_type = "demo"
+    if token:
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            resolved_user_type = payload.get("sub", "demo")
+        except Exception:
+            await websocket.accept()
+            await websocket.send_json({"type": "error", "message": "Authentication token expired. Please log in again."})
+            await websocket.close()
+            return
+    elif user_type == "demo":
+        resolved_user_type = "demo"
+    else:
+        await websocket.accept()
+        await websocket.send_json({"type": "error", "message": "Authentication token required."})
+        await websocket.close()
+        return
+
     await websocket.accept()
     settings = load_settings()
     api_key = settings.get("gemini_api_key")
@@ -225,12 +273,13 @@ async def websocket_process_tickets(
                 reasoning=classification["reasoning"],
                 confidence=classification["confidence"],
                 processing_time=classification["processing_time"],
-                user_type=user_type,
+                user_type=resolved_user_type,
                 created_at=datetime.utcnow()
             )
             db.add(db_ticket)
             db.commit()
             db.refresh(db_ticket)
+
             
             # Return successfully processed ticket
             await websocket.send_json({
@@ -272,9 +321,10 @@ def get_results(
     priority: Optional[str] = None,
     sort_by: str = Query("created_at", pattern="^(created_at|priority|category|confidence|processing_time)$"),
     sort_desc: bool = True,
-    x_user_type: Optional[str] = Header("demo")
+    user_scope: str = Depends(get_current_user_scope)
 ):
-    query = db.query(Ticket).filter(Ticket.user_type == x_user_type)
+    query = db.query(Ticket).filter(Ticket.user_type == user_scope)
+
     
     # Apply filters
     if search:
@@ -318,9 +368,9 @@ def get_results(
 def get_ticket(
     id: int, 
     db: Session = Depends(get_db),
-    x_user_type: Optional[str] = Header("demo")
+    user_scope: str = Depends(get_current_user_scope)
 ):
-    ticket = db.query(Ticket).filter(and_(Ticket.id == id, Ticket.user_type == x_user_type)).first()
+    ticket = db.query(Ticket).filter(and_(Ticket.id == id, Ticket.user_type == user_scope)).first()
     if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found.")
     return ticket
@@ -330,9 +380,9 @@ def update_ticket(
     id: int, 
     ticket_update: TicketUpdate, 
     db: Session = Depends(get_db),
-    x_user_type: Optional[str] = Header("demo")
+    user_scope: str = Depends(get_current_user_scope)
 ):
-    ticket = db.query(Ticket).filter(and_(Ticket.id == id, Ticket.user_type == x_user_type)).first()
+    ticket = db.query(Ticket).filter(and_(Ticket.id == id, Ticket.user_type == user_scope)).first()
     if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found.")
         
@@ -351,9 +401,9 @@ def update_ticket(
 @app.get("/api/stats", response_model=DashboardStats)
 def get_stats(
     db: Session = Depends(get_db),
-    x_user_type: Optional[str] = Header("demo")
+    user_scope: str = Depends(get_current_user_scope)
 ):
-    total = db.query(Ticket).filter(Ticket.user_type == x_user_type).count()
+    total = db.query(Ticket).filter(Ticket.user_type == user_scope).count()
     
     if total == 0:
         return DashboardStats(
@@ -367,7 +417,7 @@ def get_stats(
         )
         
     # Categories
-    categories_counts = db.query(Ticket.category, func.count(Ticket.id)).filter(Ticket.user_type == x_user_type).group_by(Ticket.category).all()
+    categories_counts = db.query(Ticket.category, func.count(Ticket.id)).filter(Ticket.user_type == user_scope).group_by(Ticket.category).all()
     category_list = []
     for cat, count in categories_counts:
         category_list.append(CategoryStat(
@@ -377,7 +427,7 @@ def get_stats(
         ))
         
     # Priorities
-    priorities_counts = db.query(Ticket.priority, func.count(Ticket.id)).filter(Ticket.user_type == x_user_type).group_by(Ticket.priority).all()
+    priorities_counts = db.query(Ticket.priority, func.count(Ticket.id)).filter(Ticket.user_type == user_scope).group_by(Ticket.priority).all()
     priority_list = []
     for pri, count in priorities_counts:
         priority_list.append(PriorityStat(
@@ -387,15 +437,15 @@ def get_stats(
         ))
         
     # Averages
-    avg_confidence = db.query(func.avg(Ticket.confidence)).filter(Ticket.user_type == x_user_type).scalar() or 0.0
-    avg_processing = db.query(func.avg(Ticket.processing_time)).filter(Ticket.user_type == x_user_type).scalar() or 0.0
+    avg_confidence = db.query(func.avg(Ticket.confidence)).filter(Ticket.user_type == user_scope).scalar() or 0.0
+    avg_processing = db.query(func.avg(Ticket.processing_time)).filter(Ticket.user_type == user_scope).scalar() or 0.0
     
     # Processed today
     today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    today_count = db.query(Ticket).filter(and_(Ticket.created_at >= today_start, Ticket.user_type == x_user_type)).count()
+    today_count = db.query(Ticket).filter(and_(Ticket.created_at >= today_start, Ticket.user_type == user_scope)).count()
     
     # Critical Count (P1 Critical)
-    p1_count = db.query(Ticket).filter(and_(Ticket.priority.like("%P1%"), Ticket.user_type == x_user_type)).count()
+    p1_count = db.query(Ticket).filter(and_(Ticket.priority.like("%P1%"), Ticket.user_type == user_scope)).count()
     
     return DashboardStats(
         total_tickets=total,
@@ -407,15 +457,17 @@ def get_stats(
         critical_tickets_count=p1_count
     )
 
+
 # ----------------------------------------------------
 # 6. REPORT EXPORTS (CSV & JSON)
 # ----------------------------------------------------
 @app.get("/api/export/csv")
 def export_csv(
     db: Session = Depends(get_db),
-    x_user_type: Optional[str] = Header("demo")
+    user_scope: str = Depends(get_current_user_scope)
 ):
-    tickets = db.query(Ticket).filter(Ticket.user_type == x_user_type).all()
+    tickets = db.query(Ticket).filter(Ticket.user_type == user_scope).all()
+
     
     def generate():
         import io
@@ -448,9 +500,10 @@ def export_csv(
 @app.get("/api/export/json")
 def export_json(
     db: Session = Depends(get_db),
-    x_user_type: Optional[str] = Header("demo")
+    user_scope: str = Depends(get_current_user_scope)
 ):
-    tickets = db.query(Ticket).filter(Ticket.user_type == x_user_type).all()
+    tickets = db.query(Ticket).filter(Ticket.user_type == user_scope).all()
+
     data = []
     for t in tickets:
         data.append({
@@ -509,7 +562,8 @@ def signup(payload: UserAuth, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Email address is already registered.")
         
-    hashed_pass = hashlib.sha256(payload.password.encode()).hexdigest()
+    salt = bcrypt.gensalt()
+    hashed_pass = bcrypt.hashpw(payload.password.encode('utf-8'), salt).decode('utf-8')
     new_user = User(
         email=payload.email,
         password=hashed_pass
@@ -520,12 +574,27 @@ def signup(payload: UserAuth, db: Session = Depends(get_db)):
 
 @app.post("/api/auth/login")
 def login(payload: UserAuth, db: Session = Depends(get_db)):
-    hashed_pass = hashlib.sha256(payload.password.encode()).hexdigest()
-    user = db.query(User).filter(and_(User.email == payload.email, User.password == hashed_pass)).first()
+    user = db.query(User).filter(User.email == payload.email).first()
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password.")
         
-    return {"status": "success", "user_type": "new", "email": user.email}
+    if not bcrypt.checkpw(payload.password.encode('utf-8'), user.password.encode('utf-8')):
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
+        
+    import datetime
+    expiration = datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+    token_payload = {
+        "sub": user.email,
+        "exp": expiration
+    }
+    token = jwt.encode(token_payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    return {
+        "status": "success",
+        "token": token,
+        "email": user.email
+    }
+
 
 # ----------------------------------------------------
 # 7. SETTINGS ENDPOINTS
@@ -571,7 +640,7 @@ def update_settings(payload: Dict[str, str]):
 def chat_assistant(
     request: ChatRequest, 
     db: Session = Depends(get_db),
-    x_user_type: Optional[str] = Header("demo")
+    user_scope: str = Depends(get_current_user_scope)
 ):
     """
     Simulates a smart ticket agent assistant using local queries to standard database questions.
@@ -581,11 +650,12 @@ def chat_assistant(
     message = request.message.lower()
     
     # Get statistics from DB for dynamic questions
-    total_tickets = db.query(Ticket).filter(Ticket.user_type == x_user_type).count()
-    bug_tickets = db.query(Ticket).filter(and_(Ticket.category == "Bug", Ticket.user_type == x_user_type)).count()
-    billing_tickets = db.query(Ticket).filter(and_(Ticket.category == "Billing", Ticket.user_type == x_user_type)).count()
-    feature_tickets = db.query(Ticket).filter(and_(Ticket.category == "Feature", Ticket.user_type == x_user_type)).count()
-    p1_tickets = db.query(Ticket).filter(and_(Ticket.priority.like("%P1%"), Ticket.user_type == x_user_type)).count()
+    total_tickets = db.query(Ticket).filter(Ticket.user_type == user_scope).count()
+    bug_tickets = db.query(Ticket).filter(and_(Ticket.category == "Bug", Ticket.user_type == user_scope)).count()
+    billing_tickets = db.query(Ticket).filter(and_(Ticket.category == "Billing", Ticket.user_type == user_scope)).count()
+    feature_tickets = db.query(Ticket).filter(and_(Ticket.category == "Feature", Ticket.user_type == user_scope)).count()
+    p1_tickets = db.query(Ticket).filter(and_(Ticket.priority.like("%P1%"), Ticket.user_type == user_scope)).count()
+
     
     suggested_actions = [
         "Show all bug tickets", 

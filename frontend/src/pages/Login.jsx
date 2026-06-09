@@ -58,7 +58,8 @@ const Login = () => {
           email,
           password
         });
-        localStorage.setItem('userType', 'new');
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userType', response.data.email);
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('userEmail', response.data.email);
         navigate('/dashboard');

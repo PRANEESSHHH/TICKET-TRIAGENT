@@ -11,6 +11,11 @@ axios.interceptors.request.use(
   (config) => {
     const userType = localStorage.getItem('userType') || 'demo';
     config.headers['X-User-Type'] = userType;
+    
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
