@@ -643,20 +643,90 @@ def chat_assistant(
     user_scope: str = Depends(get_current_user_scope)
 ):
     """
-    Simulates a smart ticket agent assistant using local queries to standard database questions.
-    If Gemini API key is configured, could query database dynamically.
-    For standard offline mode, we provide extremely accurate query responses to questions.
+    Smart ticket agent assistant. Uses LangChain with Gemini if configured,
+    and falls back to standard rule-based pattern matching if offline.
     """
     message = request.message.lower()
     
-    # Get statistics from DB for dynamic questions
+    # Get statistics from DB for dynamic questions/context
     total_tickets = db.query(Ticket).filter(Ticket.user_type == user_scope).count()
     bug_tickets = db.query(Ticket).filter(and_(Ticket.category == "Bug", Ticket.user_type == user_scope)).count()
     billing_tickets = db.query(Ticket).filter(and_(Ticket.category == "Billing", Ticket.user_type == user_scope)).count()
     feature_tickets = db.query(Ticket).filter(and_(Ticket.category == "Feature", Ticket.user_type == user_scope)).count()
     p1_tickets = db.query(Ticket).filter(and_(Ticket.priority.like("%P1%"), Ticket.user_type == user_scope)).count()
 
+    # Load active configurations
+    settings = load_settings()
+    active_key = settings.get("gemini_api_key") or os.getenv("GEMINI_API_KEY") or DEFAULT_GEMINI_KEY
     
+    if active_key:
+        try:
+            from langchain_google_genai import ChatGoogleGenerativeAI
+            from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+            
+            # Fetch recent tickets for AI context
+            recent_tickets = db.query(Ticket).filter(Ticket.user_type == user_scope).order_by(desc(Ticket.created_at)).limit(10).all()
+            tickets_context = "\n".join([
+                f"- Ticket ID: {t.ticket_id}, Title: {t.title}, Category: {t.category}, Priority: {t.priority}, Confidence: {round(t.confidence * 100)}%"
+                for t in recent_tickets
+            ])
+            
+            other_tickets = db.query(Ticket).filter(and_(Ticket.category == "Other", Ticket.user_type == user_scope)).count()
+            p2_tickets = db.query(Ticket).filter(and_(Ticket.priority.like("%P2%"), Ticket.user_type == user_scope)).count()
+            p3_tickets = db.query(Ticket).filter(and_(Ticket.priority.like("%P3%"), Ticket.user_type == user_scope)).count()
+            p4_tickets = db.query(Ticket).filter(and_(Ticket.priority.like("%P4%"), Ticket.user_type == user_scope)).count()
+            
+            system_prompt = (
+                "You are a helpful, expert AI Support Chatbot for the TriageAgent platform.\n"
+                "Your goal is to assist support agents in analyzing their ticket database, "
+                "providing summary metrics, and answering general questions about the platform.\n\n"
+                "Here is the real-time context of the user's active database workspace:\n"
+                f"- Total Tickets in queue: {total_tickets}\n"
+                f"- Category distribution: Bug: {bug_tickets}, Billing: {billing_tickets}, Feature: {feature_tickets}, Other: {other_tickets}\n"
+                f"- Priority distribution: P1 Critical: {p1_tickets}, P2 High: {p2_tickets}, P3 Medium: {p3_tickets}, P4 Low: {p4_tickets}\n\n"
+                "Here are the 10 most recent tickets in the workspace database:\n"
+                f"{tickets_context or 'None (Queue is empty)'}\n\n"
+                "Instructions:\n"
+                "1. If the user asks for stats or numbers (e.g. how many billing/bug tickets), use the context metrics provided above to give an exact and helpful answer.\n"
+                "2. If the user asks to show or list tickets (e.g. show critical tickets, list bug tickets), refer to the recent tickets list above. If you need to search or give answers outside this list, state clearly that these are the most recent ones.\n"
+                "3. Answer questions about the application itself (TriageAgent: an AI-powered Support Ticket Classification Platform designed by Praveen, Pranesh Kumar, and Prasanna. It classifies tickets into Bug, Billing, Feature, or Other, and evaluates priority from P1 to P4 using Gemini 1.5).\n"
+                "4. Be concise, professional, clear, and friendly.\n"
+                "5. Keep markdown formatting nice (use bolding for numbers/ticket IDs, list formats for multiple items)."
+            )
+            
+            messages = [SystemMessage(content=system_prompt)]
+            if request.history:
+                for msg in request.history:
+                    role = msg.get("role")
+                    content = msg.get("content")
+                    if role == "user":
+                        messages.append(HumanMessage(content=content))
+                    elif role in ["assistant", "bot"]:
+                        messages.append(AIMessage(content=content))
+            
+            messages.append(HumanMessage(content=request.message))
+            
+            llm = ChatGoogleGenerativeAI(
+                model=settings.get("model_name", "gemini-1.5-flash"),
+                google_api_key=active_key,
+                temperature=0.4
+            )
+            
+            response = llm.invoke(messages)
+            reply = response.content
+            
+            suggested_actions = [
+                "Show all bug tickets", 
+                "Show critical P1 tickets", 
+                "How many billing tickets do we have?",
+                "Download latest CSV report"
+            ]
+            return ChatResponse(reply=reply, suggested_actions=suggested_actions)
+            
+        except Exception as e:
+            print(f"Error calling Gemini in chat: {e}. Falling back to rule-based parser.")
+
+    # Fallback to local rule-based parser if API key is missing or model invocation fails
     suggested_actions = [
         "Show all bug tickets", 
         "Show critical P1 tickets", 
@@ -680,16 +750,16 @@ def chat_assistant(
             
     elif "list" in message or "show" in message:
         if "bug" in message:
-            bugs = db.query(Ticket).filter(and_(Ticket.category == "Bug", Ticket.user_type == x_user_type)).limit(5).all()
+            bugs = db.query(Ticket).filter(and_(Ticket.category == "Bug", Ticket.user_type == user_scope)).limit(5).all()
             reply = "Here are the top 5 recent **Bug** tickets:\n\n" + "\n".join([f"- **{b.ticket_id}**: {b.title} ({b.priority})" for b in bugs])
         elif "critical" in message or "p1" in message:
-            critical = db.query(Ticket).filter(and_(Ticket.priority.like("%P1%"), Ticket.user_type == x_user_type)).limit(5).all()
+            critical = db.query(Ticket).filter(and_(Ticket.priority.like("%P1%"), Ticket.user_type == user_scope)).limit(5).all()
             reply = "Here are the top recent **P1 Critical** tickets:\n\n" + "\n".join([f"- **{c.ticket_id}**: {c.title} ({c.category})" for c in critical])
         elif "billing" in message:
-            billing = db.query(Ticket).filter(and_(Ticket.category == "Billing", Ticket.user_type == x_user_type)).limit(5).all()
+            billing = db.query(Ticket).filter(and_(Ticket.category == "Billing", Ticket.user_type == user_scope)).limit(5).all()
             reply = "Here are the top 5 recent **Billing** tickets:\n\n" + "\n".join([f"- **{b.ticket_id}**: {b.title} ({b.priority})" for b in billing])
         else:
-            recent = db.query(Ticket).filter(Ticket.user_type == x_user_type).order_by(desc(Ticket.created_at)).limit(5).all()
+            recent = db.query(Ticket).filter(Ticket.user_type == user_scope).order_by(desc(Ticket.created_at)).limit(5).all()
             reply = "Here are the 5 most recently created support tickets:\n\n" + "\n".join([f"- **{r.ticket_id}**: {r.title} ({r.category} - {r.priority})" for r in recent])
             
     elif "hello" in message or "hi" in message or "hey" in message:
