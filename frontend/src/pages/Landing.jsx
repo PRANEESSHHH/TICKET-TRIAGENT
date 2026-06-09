@@ -36,6 +36,10 @@ const Landing = () => {
   const handleStart = (userType) => {
     localStorage.setItem('userType', userType);
     localStorage.setItem('isAuthenticated', 'true');
+    if (userType === 'demo') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userEmail');
+    }
     navigate('/dashboard');
   };
 

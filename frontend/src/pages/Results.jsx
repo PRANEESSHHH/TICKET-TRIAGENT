@@ -109,7 +109,8 @@ const Results = () => {
   const handleExportCSV = () => {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
-    window.open(`${cleanApiBase}/api/export/csv`, '_blank');
+    const token = localStorage.getItem('token') || 'demo';
+    window.open(`${cleanApiBase}/api/export/csv?token=${token}`, '_blank');
   };
 
   return (

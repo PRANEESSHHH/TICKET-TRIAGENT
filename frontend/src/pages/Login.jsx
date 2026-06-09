@@ -78,6 +78,8 @@ const Login = () => {
       setLoading(false);
       localStorage.setItem('userType', 'demo');
       localStorage.setItem('isAuthenticated', 'true');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userEmail');
       navigate('/dashboard');
     }, 300);
   };

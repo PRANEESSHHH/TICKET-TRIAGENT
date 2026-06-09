@@ -20,19 +20,26 @@ const Reports = () => {
   const handleExportCSV = () => {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
-    window.open(`${cleanApiBase}/api/export/csv${buildQueryString()}`, '_blank');
+    const token = localStorage.getItem('token') || 'demo';
+    const qs = buildQueryString();
+    const delimiter = qs ? '&' : '?';
+    window.open(`${cleanApiBase}/api/export/csv${qs}${delimiter}token=${token}`, '_blank');
   };
 
   const handleExportJSON = () => {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
-    window.open(`${cleanApiBase}/api/export/json${buildQueryString()}`, '_blank');
+    const token = localStorage.getItem('token') || 'demo';
+    const qs = buildQueryString();
+    const delimiter = qs ? '&' : '?';
+    window.open(`${cleanApiBase}/api/export/json${qs}${delimiter}token=${token}`, '_blank');
   };
 
   const handleDownloadDatabase = () => {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const cleanApiBase = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
-    window.open(`${cleanApiBase}/api/export/database`, '_blank');
+    const token = localStorage.getItem('token') || 'demo';
+    window.open(`${cleanApiBase}/api/export/database?token=${token}`, '_blank');
   };
 
   return (

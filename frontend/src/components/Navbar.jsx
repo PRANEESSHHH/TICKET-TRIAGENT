@@ -28,6 +28,8 @@ const Navbar = ({ onMenuClick }) => {
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userType');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
     navigate('/login');
   };
 

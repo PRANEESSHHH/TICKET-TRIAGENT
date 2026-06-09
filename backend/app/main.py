@@ -70,13 +70,19 @@ def save_settings(settings: dict):
 
 def get_current_user_scope(
     authorization: Optional[str] = Header(None), 
-    x_user_type: Optional[str] = Header(None)
+    x_user_type: Optional[str] = Header(None),
+    token: Optional[str] = Query(None)
 ) -> str:
-    # If there is a JWT token, verify it and return the user's email
+    # If there is a JWT token in header or query parameter, verify it and return the user's email
+    resolved_token = None
     if authorization and authorization.startswith("Bearer "):
-        token = authorization.split(" ")[1]
+        resolved_token = authorization.split(" ")[1]
+    elif token:
+        resolved_token = token
+        
+    if resolved_token and resolved_token != "demo":
         try:
-            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            payload = jwt.decode(resolved_token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
             email = payload.get("sub")
             if email:
                 return email
@@ -84,7 +90,7 @@ def get_current_user_scope(
             raise HTTPException(status_code=401, detail="Session expired or invalid login token.")
             
     # Fallback to demo mode if specified
-    if x_user_type == "demo":
+    if x_user_type == "demo" or token == "demo":
         return "demo"
         
     raise HTTPException(status_code=401, detail="Authentication token required.")
@@ -527,7 +533,7 @@ def export_json(
 
 # Endpoint to download SQLite db file directly
 @app.get("/api/export/database")
-def download_database():
+def download_database(user_scope: str = Depends(get_current_user_scope)):
     from app.database import DATABASE_URL
     if not DATABASE_URL.startswith("sqlite"):
         raise HTTPException(status_code=400, detail="Database export is only supported when using SQLite database.")
