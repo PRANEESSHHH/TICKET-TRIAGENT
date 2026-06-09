@@ -137,7 +137,7 @@ const Details = () => {
       {/* Main Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         {/* Left: Original Ticket details (3 cols) */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm lg:col-span-3 space-y-6">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-sm lg:col-span-3 space-y-6">
           <div className="border-b border-slate-100 pb-5">
             <span className="text-[10px] font-mono font-bold text-slate-400 block tracking-widest">{ticket?.ticket_id}</span>
             <h2 className="text-lg font-bold text-slate-850 mt-1 leading-snug">{ticket?.title}</h2>
@@ -155,7 +155,7 @@ const Details = () => {
         </div>
 
         {/* Right: AI Triage Summary (2 cols) */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2 flex flex-col justify-between">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm lg:col-span-2 flex flex-col justify-between">
           <div className="space-y-6">
             <div className="flex items-center space-x-2.5 pb-4 border-b border-slate-100">
               <FiCpu className="w-4.5 h-4.5 text-blue-600" />
@@ -211,7 +211,7 @@ const Details = () => {
       </div>
 
       {/* JSON Viewer */}
-      <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 shadow-sm">
+      <div className="bg-slate-50 border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm">
         <h4 className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest mb-4 pb-3 border-b border-slate-200 flex items-center space-x-2">
           <FiFileText className="text-blue-600 w-4 h-4" />
           <span>Structured Database JSON Record</span>

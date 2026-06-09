@@ -85,7 +85,7 @@ const Settings = () => {
       <form onSubmit={handleSaveSettings} className="space-y-8">
         
         {/* AI Agent Configurations */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-6">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm space-y-6">
           <h3 className="font-extrabold text-base text-slate-850 pb-3 border-b border-slate-100 flex items-center space-x-2">
             <FiCpu className="text-blue-600 w-5 h-5 animate-pulse" />
             <span>AI Model Settings</span>
@@ -154,7 +154,7 @@ const Settings = () => {
         <button
           type="submit"
           disabled={saving}
-          className="bg-slate-900 hover:bg-slate-850 text-white px-6 py-4 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center space-x-2.5"
+          className="w-full sm:w-auto justify-center bg-slate-900 hover:bg-slate-850 text-white px-6 py-4 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center space-x-2.5"
         >
           {saving ? (
             <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>

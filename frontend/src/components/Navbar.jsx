@@ -49,7 +49,7 @@ const Navbar = ({ onMenuClick }) => {
           <h2 className="text-sm md:text-lg font-bold text-slate-100 leading-tight">
             {getPageTitle()}
           </h2>
-          <p className="text-[9px] md:text-[11px] text-slate-300 mt-0.5 truncate max-w-[150px] sm:max-w-none">
+          <p className="hidden sm:block text-[9px] md:text-[11px] text-slate-300 mt-0.5 truncate">
             Support ticket triage analytics engine
           </p>
         </div>

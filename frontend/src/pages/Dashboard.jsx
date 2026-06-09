@@ -97,11 +97,11 @@ const Dashboard = () => {
   return (
     <div className="space-y-8 pb-10">
       {/* Metrics Row 1 */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Total Tickets */}
         <motion.div
           whileHover={{ y: -2 }}
-          className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex items-center justify-between"
+          className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-sm flex items-center justify-between"
         >
           <div className="text-left">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Queue</span>
@@ -118,7 +118,7 @@ const Dashboard = () => {
         {/* Critical Tickets */}
         <motion.div
           whileHover={{ y: -2 }}
-          className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex items-center justify-between"
+          className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-sm flex items-center justify-between"
         >
           <div className="text-left">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Critical P1</span>
@@ -135,7 +135,7 @@ const Dashboard = () => {
         {/* Processed Today */}
         <motion.div
           whileHover={{ y: -2 }}
-          className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex items-center justify-between"
+          className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-sm flex items-center justify-between"
         >
           <div className="text-left">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Processed Today</span>
@@ -152,7 +152,7 @@ const Dashboard = () => {
         {/* Avg Confidence */}
         <motion.div
           whileHover={{ y: -2 }}
-          className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex items-center justify-between"
+          className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-sm flex items-center justify-between"
         >
           <div className="text-left">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Average Confidence</span>
@@ -172,14 +172,14 @@ const Dashboard = () => {
         <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-4 px-1">
           Classification Breakdown
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
             { title: 'Bugs Found', name: 'Bug', color: 'text-red-500', bg: 'bg-white' },
             { title: 'Billing Issues', name: 'Billing', color: 'text-amber-500', bg: 'bg-white' },
             { title: 'Feature Requests', name: 'Feature', color: 'text-blue-500', bg: 'bg-white' },
             { title: 'Other Queries', name: 'Other', color: 'text-slate-500', bg: 'bg-white' }
           ].map((item, idx) => (
-            <div key={idx} className={`${item.bg} border border-slate-200 p-5 rounded-2xl flex flex-col justify-between h-28 shadow-sm`}>
+            <div key={idx} className={`${item.bg} border border-slate-200 p-4 sm:p-5 rounded-2xl flex flex-col justify-between h-28 shadow-sm`}>
               <span className="text-[10px] font-bold text-slate-400">{item.title}</span>
               <div className="flex justify-between items-baseline mt-2">
                 <span className={`text-2xl font-black ${item.color}`}>
@@ -197,9 +197,9 @@ const Dashboard = () => {
       </div>
 
       {/* Bottom Grid: Recent Activity & Performance KPI */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Recent Tickets Table (Left 2 cols) */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm lg:col-span-2">
           <div className="flex justify-between items-center mb-6">
             <div className="text-left">
               <h3 className="font-extrabold text-base text-slate-900">Recent Ticket Activity</h3>
@@ -215,7 +215,7 @@ const Dashboard = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[500px] text-left border-collapse">
+            <table className="w-full min-w-[600px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 text-slate-400 text-[10px] font-bold uppercase">
                   <th className="pb-3 pl-2">Ticket ID</th>
@@ -259,7 +259,7 @@ const Dashboard = () => {
         </div>
 
         {/* Processing Efficiency Panel */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between text-left">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col justify-between text-left">
           <div className="flex items-center space-x-3 mb-6">
             <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
               <FiClock className="w-5 h-5 text-slate-600" />

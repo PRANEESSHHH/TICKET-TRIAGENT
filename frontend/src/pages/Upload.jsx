@@ -137,7 +137,7 @@ const Upload = () => {
   return (
     <div className="space-y-8 pb-10 text-left">
       {/* Upload Box Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-sm">
         <h3 className="font-extrabold text-base text-slate-850 mb-2">Upload Support Tickets</h3>
         <p className="text-xs text-slate-400 mb-6">Upload a structured JSON file containing ticket titles and descriptions to run AI categorization.</p>
 
@@ -148,7 +148,7 @@ const Upload = () => {
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={file ? null : triggerInputClick}
-          className={`border-2 border-dashed rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer transition-all relative ${
+          className={`border-2 border-dashed rounded-3xl p-6 sm:p-10 flex flex-col items-center justify-center text-center cursor-pointer transition-all relative ${
             dragActive 
               ? 'border-blue-500 bg-blue-50/20' 
               : 'border-slate-200 hover:border-slate-300 bg-slate-50/30'
@@ -220,7 +220,7 @@ const Upload = () => {
           </div>
         )}
 
-        <div className="mt-6 border border-slate-200 rounded-3xl bg-slate-50 p-5">
+        <div className="mt-6 border border-slate-200 rounded-3xl bg-slate-50 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h4 className="font-bold text-slate-850 text-sm">Manual JSON Entry</h4>
@@ -243,10 +243,10 @@ const Upload = () => {
                 rows={8}
                 className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-100 focus:outline-none"
               />
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleManualJsonSubmit}
-                  className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm"
+                  className="w-full sm:w-auto justify-center bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center"
                 >
                   Validate & Load JSON
                 </button>
@@ -255,7 +255,7 @@ const Upload = () => {
                     setManualJson('');
                     setError('');
                   }}
-                  className="border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-2xl text-xs font-bold transition-all hover:border-slate-300"
+                  className="w-full sm:w-auto justify-center border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-2xl text-xs font-bold transition-all hover:border-slate-300 flex items-center"
                 >
                   Clear Input
                 </button>
@@ -264,11 +264,11 @@ const Upload = () => {
           )}
         </div>
 
-        <div className="flex items-center space-x-4 mt-6">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-6">
           {!file && (
             <button
               onClick={handleLoadSampleDataset}
-              className="border border-slate-200 hover:border-slate-350 bg-white text-slate-700 px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm"
+              className="w-full sm:w-auto justify-center border border-slate-200 hover:border-slate-350 bg-white text-slate-700 px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center"
             >
               Load Demo Dataset
             </button>
@@ -278,7 +278,7 @@ const Upload = () => {
             <button
               onClick={handleProcessTickets}
               disabled={tickets.length === 0}
-              className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center space-x-2"
+              className="w-full sm:w-auto justify-center bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center space-x-2"
             >
               <FiCpu className="w-4 h-4" />
               <span>Process {tickets.length} Tickets</span>

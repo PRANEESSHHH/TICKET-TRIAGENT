@@ -116,9 +116,9 @@ const Results = () => {
   return (
     <div className="space-y-6 pb-10 text-left">
       {/* Control Header Grid */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-4">
+      <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
         {/* Search Input */}
-        <div className="relative w-full md:max-w-sm flex items-center">
+        <div className="relative w-full lg:max-w-xs flex items-center">
           <FiSearch className="w-4.5 h-4.5 text-slate-400 absolute left-4" />
           <input
             type="text"
@@ -130,14 +130,14 @@ const Results = () => {
         </div>
 
         {/* Filters and Actions */}
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 sm:gap-3 w-full lg:w-auto">
           {/* Category Filter */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 w-full sm:w-auto">
             <span className="text-[10px] text-slate-400 hidden sm:inline"><FiFilter className="inline mr-1" />Category</span>
             <select
               value={categoryFilter}
               onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
-              className="bg-slate-50 border border-slate-200 text-slate-700 text-xs px-2.5 py-2 rounded-xl outline-none focus:border-blue-500"
+              className="w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-700 text-xs px-2.5 py-2 rounded-xl outline-none focus:border-blue-500"
             >
               <option value="">All Categories</option>
               <option value="Bug">Bugs</option>
@@ -148,11 +148,11 @@ const Results = () => {
           </div>
 
           {/* Priority Filter */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 w-full sm:w-auto">
             <select
               value={priorityFilter}
               onChange={(e) => { setPriorityFilter(e.target.value); setPage(1); }}
-              className="bg-slate-50 border border-slate-200 text-slate-700 text-xs px-2.5 py-2 rounded-xl outline-none focus:border-blue-500"
+              className="w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-700 text-xs px-2.5 py-2 rounded-xl outline-none focus:border-blue-500"
             >
               <option value="">All Priorities</option>
               <option value="P1 Critical">P1 Critical</option>
@@ -166,7 +166,7 @@ const Results = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-slate-50 border border-slate-200 text-slate-700 text-xs px-2.5 py-2 rounded-xl outline-none focus:border-blue-500"
+            className="w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-700 text-xs px-2.5 py-2 rounded-xl outline-none focus:border-blue-500"
           >
             <option value="created_at">Date Created</option>
             <option value="confidence">Confidence</option>
@@ -175,7 +175,7 @@ const Results = () => {
 
           <button
             onClick={() => setSortDesc(!sortDesc)}
-            className="border border-slate-200 p-2 py-2 rounded-xl hover:bg-slate-50 text-slate-600 text-xs font-semibold"
+            className="w-full sm:w-auto justify-center border border-slate-200 p-2 py-2 rounded-xl hover:bg-slate-50 text-slate-600 text-xs font-semibold flex items-center"
             title="Toggle Sort Order"
           >
             {sortDesc ? 'Desc' : 'Asc'}
@@ -184,7 +184,7 @@ const Results = () => {
           {/* Export */}
           <button
             onClick={handleExportCSV}
-            className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5"
+            className="w-full sm:w-auto justify-center bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5"
           >
             <FiDownload />
             <span>Export CSV</span>
@@ -207,7 +207,7 @@ const Results = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[750px] text-left border-collapse">
+            <table className="w-full min-w-[800px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-400 text-[10px] font-bold uppercase">
                   <th className="py-4 pl-6 w-28">ID</th>

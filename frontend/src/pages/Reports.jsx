@@ -45,11 +45,11 @@ const Reports = () => {
   return (
     <div className="space-y-8 pb-10 text-left">
       {/* Filters Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm">
         <h3 className="font-extrabold text-base text-slate-850 mb-2">Configure Report Filter</h3>
         <p className="text-xs text-slate-400 mb-6">Choose specific categories or date brackets to scope your downloadable datasets.</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           {/* Category */}
           <div>
             <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2 px-1">Category</label>
@@ -107,9 +107,9 @@ const Reports = () => {
       </div>
 
       {/* Export Options Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {/* CSV Card */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[280px] hover:border-slate-350 transition-all">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col justify-between min-h-[260px] md:h-[280px] hover:border-slate-350 transition-all">
           <div className="space-y-4">
             <div className="bg-blue-50 border border-blue-100 p-3 rounded-2xl w-fit text-blue-600">
               <FiTable className="w-5 h-5" />
@@ -131,7 +131,7 @@ const Reports = () => {
         </div>
 
         {/* JSON Card */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[280px] hover:border-slate-350 transition-all">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col justify-between min-h-[260px] md:h-[280px] hover:border-slate-350 transition-all">
           <div className="space-y-4">
             <div className="bg-purple-50 border border-purple-100 p-3 rounded-2xl w-fit text-purple-600">
               <FiFileText className="w-5 h-5" />
@@ -153,7 +153,7 @@ const Reports = () => {
         </div>
 
         {/* Database Snapshot Card */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[280px] hover:border-slate-350 transition-all">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col justify-between min-h-[260px] md:h-[280px] hover:border-slate-350 transition-all">
           <div className="space-y-4">
             <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-2xl w-fit text-emerald-500">
               <FiDatabase className="w-5 h-5" />

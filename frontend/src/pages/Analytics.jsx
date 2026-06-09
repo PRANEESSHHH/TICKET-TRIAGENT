@@ -124,14 +124,14 @@ const Analytics = () => {
   return (
     <div className="space-y-8 pb-10 text-left">
       {/* Overview Aggregates */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {[
           { label: 'Total Tickets', val: stats?.total_tickets, desc: 'Active session entries', icon: <FiDatabase className="w-4.5 h-4.5 text-blue-600" />, bg: 'bg-blue-50 border border-blue-100' },
           { label: 'Avg AI Confidence', val: stats ? `${Math.round(stats.average_confidence * 100)}%` : '0%', desc: 'Machine categorization score', icon: <FiTrendingUp className="w-4.5 h-4.5 text-purple-600" />, bg: 'bg-purple-50 border border-purple-100' },
           { label: 'Avg Triage Delay', val: stats ? `${stats.average_processing_time}s` : '0s', desc: 'LangChain pipeline delays', icon: <FiClock className="w-4.5 h-4.5 text-emerald-600" />, bg: 'bg-emerald-50 border border-emerald-100' },
           { label: 'SLA Urgencies', val: stats?.critical_tickets_count, desc: 'P1 Critical active', icon: <FiAlertTriangle className="w-4.5 h-4.5 text-red-650" />, bg: 'bg-red-50 border border-red-100' }
         ].map((kpi, idx) => (
-          <div key={idx} className="bg-white border border-slate-200 p-5 rounded-2xl flex items-center justify-between shadow-sm">
+          <div key={idx} className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl flex items-center justify-between shadow-sm">
             <div>
               <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{kpi.label}</span>
               <span className="text-xl font-black text-slate-800 mt-1 block">{kpi.val}</span>
@@ -145,9 +145,9 @@ const Analytics = () => {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         {/* Category Pie Chart */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm">
           <h4 className="font-extrabold text-xs text-slate-850 uppercase tracking-wider mb-6 px-2 border-l-4 border-blue-500 pl-3">Category Distribution</h4>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -182,7 +182,7 @@ const Analytics = () => {
         </div>
 
         {/* Priority Bar Chart */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm">
           <h4 className="font-extrabold text-xs text-slate-850 uppercase tracking-wider mb-6 px-2 border-l-4 border-amber-500 pl-3">Severity Priority Spread</h4>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -213,9 +213,9 @@ const Analytics = () => {
       </div>
 
       {/* Row 3: Trend Chart & Critical Issues */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Ticket Volume Trends (2 cols) */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm lg:col-span-2">
           <h4 className="font-extrabold text-xs text-slate-850 uppercase tracking-wider mb-6 px-2 border-l-4 border-indigo-500 pl-3">Incoming Ticket Volume Trend</h4>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -240,7 +240,7 @@ const Analytics = () => {
         </div>
 
         {/* Most Critical Issues List */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm">
           <h4 className="font-extrabold text-xs text-slate-850 uppercase tracking-wider mb-4 px-2 border-l-4 border-red-500 pl-3">Top Critical P1 Issues</h4>
           <div className="divide-y divide-slate-100">
             {criticalIssues.length === 0 ? (
